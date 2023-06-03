@@ -8,8 +8,10 @@ datasource db {
 }
 
 model Syndicate {
-  id   String @id @default(uuid())
-  name String
+  id       String @id @default(uuid())
+  name     String
+  username String @unique
+  password String
 
   Block Block[]
 }

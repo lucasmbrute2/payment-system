@@ -2,6 +2,8 @@
 CREATE TABLE "Syndicate" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
 
     CONSTRAINT "Syndicate_pkey" PRIMARY KEY ("id")
 );
@@ -48,6 +50,9 @@ CREATE TABLE "Invoice" (
 
     CONSTRAINT "Invoice_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Syndicate_username_key" ON "Syndicate"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Resident_cpf_key" ON "Resident"("cpf");

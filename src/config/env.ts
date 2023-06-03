@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { AppError } from 'src/errors/global-error'
 import { z } from 'zod'
 
