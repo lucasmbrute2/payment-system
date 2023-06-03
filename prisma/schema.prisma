@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Syndicate {
+  id   String @id @default(uuid())
+  name String
+
+  Block Block[]
+}
+
+model Resident {
+  id          String    @id @default(uuid())
+  name        String
+  apartament  Int
+  cpf         String    @unique
+  nonPayments Int?
+  joinAt      DateTime  @default(now())
+  leftAt      DateTime?
+
+  building   Building @relation(fields: [buildingId], references: [id])
+  buildingId String
+
+  Invoice Invoice[]
+}
+
+model Building {
+  id             String @id @default(uuid())
+  buildingNumber Int    @unique
+
+  block   Block  @relation(fields: [blockId], references: [id])
+  blockId String
+
+  Resident Resident[]
+}
+
+model Block {
+  id     String @id @default(uuid())
+  number Int
+
+  syndicate   Syndicate @relation(fields: [syndicateId], references: [id])
+  syndicateId String
+
+  Building Building[]
+}
+
+model Invoice {
+  id     String  @id @default(uuid())
+  month  Int
+  Amount Int
+  isPaid Boolean @default(false)
+
+  resident   Resident @relation(fields: [residentId], references: [id])
+  residentId String
+}
