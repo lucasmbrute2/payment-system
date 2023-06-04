@@ -41,14 +41,14 @@ CREATE TABLE "Block" (
 );
 
 -- CreateTable
-CREATE TABLE "Invoice" (
+CREATE TABLE "Invoices" (
     "id" TEXT NOT NULL,
     "month" INTEGER NOT NULL,
     "Amount" INTEGER NOT NULL,
     "isPaid" BOOLEAN NOT NULL DEFAULT false,
     "residentId" TEXT NOT NULL,
 
-    CONSTRAINT "Invoice_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Invoices_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -60,6 +60,9 @@ CREATE UNIQUE INDEX "Resident_cpf_key" ON "Resident"("cpf");
 -- CreateIndex
 CREATE UNIQUE INDEX "Building_buildingNumber_key" ON "Building"("buildingNumber");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Block_number_key" ON "Block"("number");
+
 -- AddForeignKey
 ALTER TABLE "Resident" ADD CONSTRAINT "Resident_buildingId_fkey" FOREIGN KEY ("buildingId") REFERENCES "Building"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -70,4 +73,4 @@ ALTER TABLE "Building" ADD CONSTRAINT "Building_blockId_fkey" FOREIGN KEY ("bloc
 ALTER TABLE "Block" ADD CONSTRAINT "Block_syndicateId_fkey" FOREIGN KEY ("syndicateId") REFERENCES "Syndicate"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_residentId_fkey" FOREIGN KEY ("residentId") REFERENCES "Resident"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Invoices" ADD CONSTRAINT "Invoices_residentId_fkey" FOREIGN KEY ("residentId") REFERENCES "Resident"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

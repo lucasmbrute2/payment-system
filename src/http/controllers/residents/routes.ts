@@ -56,10 +56,19 @@ export async function residentRoutes(app: FastifyInstance) {
       where: {
         leftAt: null,
       },
+      include: {
+        Invoices: true,
+        building: true,
+      },
+    })
+
+    const residentsWithoutBuildingId = residents.map((resident) => {
+      const { buildingId, ...rest } = resident
+      return rest
     })
 
     return reply.status(200).send({
-      residents,
+      residents: residentsWithoutBuildingId,
     })
   })
 

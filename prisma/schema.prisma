@@ -28,7 +28,7 @@ model Resident {
   building   Building @relation(fields: [buildingId], references: [id])
   buildingId String
 
-  Invoice Invoice[]
+  Invoices Invoices[]
 }
 
 model Building {
@@ -51,7 +51,7 @@ model Block {
   Building Building[]
 }
 
-model Invoice {
+model Invoices {
   id     String  @id @default(uuid())
   month  Int
   Amount Int
