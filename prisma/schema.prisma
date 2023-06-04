@@ -43,7 +43,7 @@ model Building {
 
 model Block {
   id     String @id @default(uuid())
-  number Int
+  number Int    @unique
 
   syndicate   Syndicate @relation(fields: [syndicateId], references: [id])
   syndicateId String
