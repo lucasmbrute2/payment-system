@@ -5,6 +5,8 @@ import { syndicatesRoutes } from './http/controllers/syndicates/routes'
 import { AppError } from './errors/global-error'
 import { ZodError } from 'zod'
 import { blockRoutes } from './http/controllers/blocks/routes'
+import { buildingRoutes } from './http/controllers/buildings/routes'
+import { residentRoutes } from './http/controllers/residents/routes'
 
 export const app = fastify()
 
@@ -17,6 +19,8 @@ app.register(fastifyJwt, {
 
 app.register(syndicatesRoutes)
 app.register(blockRoutes)
+app.register(buildingRoutes)
+app.register(residentRoutes)
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError || error instanceof AppError) {
