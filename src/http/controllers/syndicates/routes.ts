@@ -1,3 +1,4 @@
+import { compare, hash } from 'bcrypt'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { AppError } from 'src/errors/global-error'
 import { prisma } from 'src/lib/prisma'
@@ -22,18 +23,18 @@ export async function syndicatesRoutes(app: FastifyInstance) {
     })
 
     if (syndicateAlreadyExists) {
-      return new AppError('Syndicate already exits', 404)
+      throw new AppError('Syndicate already exits', 404)
     }
 
     if (password !== confirmPassword) {
-      return new AppError('Password do not match', 409)
+      throw new AppError('Password do not match', 409)
     }
 
     const response = await prisma.syndicate.create({
       data: {
         name,
         username,
-        password,
+        password: await hash(password, 6),
       },
       include: {
         Block: true,
@@ -45,5 +46,40 @@ export async function syndicatesRoutes(app: FastifyInstance) {
     })
   })
 
-  app.post('/sessions', async (req: FastifyRequest, reply: FastifyReply) => {})
+  app.post('/sessions', async (req: FastifyRequest, reply: FastifyReply) => {
+    const authBodySchema = z.object({
+      username: z.string(),
+      password: z.string(),
+    })
+
+    const { username, password } = authBodySchema.parse(req.body)
+    const syndicate = await prisma.syndicate.findUnique({
+      where: {
+        username,
+      },
+    })
+    if (!syndicate) {
+      throw new AppError('Username or password incorrect', 409)
+    }
+
+    const passwordIsCorrect = compare(password, syndicate?.password as string)
+    if (!passwordIsCorrect) {
+      throw new AppError('Username or password incorrect', 409)
+    }
+
+    const token = await reply.jwtSign(
+      {},
+      {
+        sign: {
+          sub: syndicate.id,
+        },
+      },
+    )
+
+    const { password: removePasswordFromResponse, ...viewSyndicate } = syndicate
+    return reply.status(200).send({
+      syndicate: viewSyndicate,
+      token,
+    })
+  })
 }

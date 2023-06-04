@@ -1,4 +1,5 @@
 import fastify from 'fastify'
+import fastifyJwt from '@fastify/jwt'
 import { env } from './config/env'
 import { syndicatesRoutes } from './http/controllers/syndicates/routes'
 import { AppError } from './errors/global-error'
@@ -6,8 +7,11 @@ import { ZodError } from 'zod'
 
 export const app = fastify()
 
-app.register(require('@fastify/jwt'), {
+app.register(fastifyJwt, {
   secret: env.SECRET_KEY,
+  sign: {
+    expiresIn: '7d',
+  },
 })
 
 app.register(syndicatesRoutes)
