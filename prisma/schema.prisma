@@ -16,9 +16,37 @@ model Syndicate {
   Block Block[]
 }
 
-model Resident {
+model Address {
+  id          String @id @default(uuid())
+  street      String
+  number      String
+  complement  String
+  locality    String // Bairro
+  city        String
+  region      String // Estado
+  region_code String // Código do Estado
+  country     String
+  postalCode  String
+
+  Resident Resident?
+}
+
+model Phone {
   id          String    @id @default(uuid())
-  name        String
+  countryCode String    @default("55")
+  area        String
+  number      String
+  type        PhoneType @default(MOBILE)
+
+  Resident   Resident? @relation(fields: [residentId], references: [id])
+  residentId String?
+}
+
+model Resident {
+  id    String @id @default(uuid())
+  name  String
+  email String
+
   apartament  Int
   cpf         String    @unique
   nonPayments Int?
@@ -29,6 +57,10 @@ model Resident {
   buildingId String
 
   Invoices Invoices[]
+
+  address   Address @relation(fields: [addressId], references: [id])
+  addressId String  @unique
+  Phone     Phone[]
 }
 
 model Building {
@@ -59,4 +91,10 @@ model Invoices {
 
   resident   Resident @relation(fields: [residentId], references: [id])
   residentId String
+}
+
+enum PhoneType {
+  MOBILE
+  BUSINESS
+  HOME
 }
