@@ -1,15 +1,19 @@
 import { CronJob } from 'cron'
 import { env } from '../config/env'
 import { prisma } from '../lib/prisma'
-import { Invoices, Resident } from '@prisma/client'
+import { Address, Invoices, Phone, Resident } from '@prisma/client'
+import { paymentAxios } from '../lib/axios'
+import { makePaymentInvoicePayload } from '../helpers/make-payment-payload'
 
 const actualMonth = new Date().getMonth() + 1
 
-type ResidentWithInvoice = Resident & {
+export type ResidentWithInvoice = Resident & {
   Invoices: Invoices[]
+  address: Address
+  Phone: Phone[]
 }
 
-async function checkPreviousInvoice(residents: ResidentWithInvoice[]) {
+async function sentResidentNonPayments(residents: ResidentWithInvoice[]) {
   residents.forEach(async (resident) => {
     const previousInvoice = resident.Invoices.filter(
       (invoice) => !invoice.isPaid && invoice.month !== actualMonth,
@@ -26,6 +30,17 @@ async function checkPreviousInvoice(residents: ResidentWithInvoice[]) {
   })
 }
 
+async function sendMailWithInvoicesToResidents(
+  residents: ResidentWithInvoice[],
+) {
+  const orderPromises = residents.map((resident) => {
+    return paymentAxios.post('orders', makePaymentInvoicePayload(resident))
+  })
+  const [response] = await Promise.all(orderPromises)
+  console.log(response.data.charges[0].links)
+  // TODO send mail
+}
+
 async function createInvoices() {
   const residents = await prisma.resident.findMany({
     where: {
@@ -33,6 +48,8 @@ async function createInvoices() {
     },
     include: {
       Invoices: true,
+      address: true,
+      Phone: true,
     },
   })
   const invoicesData = residents.map((resident) => {
@@ -46,13 +63,14 @@ async function createInvoices() {
     data: invoicesData,
   })
 
-  await checkPreviousInvoice(residents)
+  await sentResidentNonPayments(residents)
+  await sendMailWithInvoicesToResidents(residents)
 }
 
 export const invoiceJob = new CronJob(
   env.CRON_SCHEDULE,
   createInvoices,
   null,
-  true,
+  false,
   'America/Sao_Paulo',
 )

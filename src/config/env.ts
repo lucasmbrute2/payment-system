@@ -7,6 +7,8 @@ const envSchema = z.object({
   PORT: z.string().default('3333'),
   SECRET_KEY: z.string(),
   CRON_SCHEDULE: z.string(),
+  PAYMENT_URL: z.string(),
+  PAYMENT_ACCESS_TOKEN: z.string(),
 })
 
 const _env = envSchema.safeParse(process.env)
