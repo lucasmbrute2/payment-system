@@ -54,7 +54,7 @@ model Block {
 model Invoices {
   id     String  @id @default(uuid())
   month  Int
-  Amount Int
+  amount Int
   isPaid Boolean @default(false)
 
   resident   Resident @relation(fields: [residentId], references: [id])

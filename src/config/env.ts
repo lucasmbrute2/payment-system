@@ -6,6 +6,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['dev', 'test', 'production']).default('dev'),
   PORT: z.string().default('3333'),
   SECRET_KEY: z.string(),
+  CRON_SCHEDULE: z.string(),
 })
 
 const _env = envSchema.safeParse(process.env)

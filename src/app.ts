@@ -7,6 +7,7 @@ import { ZodError } from 'zod'
 import { blockRoutes } from './http/controllers/blocks/routes'
 import { buildingRoutes } from './http/controllers/buildings/routes'
 import { residentRoutes } from './http/controllers/residents/routes'
+import '@/src/cron/invoices'
 
 export const app = fastify()
 
