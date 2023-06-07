@@ -9,6 +9,8 @@ const envSchema = z.object({
   CRON_SCHEDULE: z.string(),
   PAYMENT_URL: z.string(),
   PAYMENT_ACCESS_TOKEN: z.string(),
+  MAIL_USERNAME: z.string(),
+  MAIL_PASSWORD: z.string(),
 })
 
 const _env = envSchema.safeParse(process.env)

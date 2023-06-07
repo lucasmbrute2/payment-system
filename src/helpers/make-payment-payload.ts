@@ -4,9 +4,9 @@ import { randomUUID } from 'node:crypto'
 import { ISODateWithNextMonth } from './dates'
 
 interface Phone {
-  country: string
-  area: string
-  number: string
+  country: number
+  area: number
+  number: number
   type: 'MOBILE' | 'BUSINESS' | 'HOME'
 }
 
@@ -20,7 +20,7 @@ interface Item {
 interface Address {
   street: string
   number: string
-  complement: string
+  complement?: string
   locality: string
   city: string
   region_code: string
@@ -73,10 +73,9 @@ interface Order {
 export const makePaymentInvoicePayload = (
   resident: ResidentWithInvoice,
 ): Order => {
-  const { name, cpf, Phone, address, Invoices } = resident
+  const { name, cpf, Phone, address } = resident
   const {
     city,
-    complement,
     country,
     locality,
     number: addressNumber,
@@ -86,10 +85,8 @@ export const makePaymentInvoicePayload = (
     region,
   } = address
 
-  if (!Phone?.length || !Invoices?.length)
-    throw new AppError('Resident phone was not found', 500)
+  if (!Phone?.length) throw new AppError('Resident phone was not found', 500)
 
-  const invoice = Invoices.at(-1) ?? Invoices[0]
   const { area, countryCode, number, type } = Phone[0]
 
   return {
@@ -108,16 +105,15 @@ export const makePaymentInvoicePayload = (
     },
     items: [
       {
-        rereference_id: invoice.id,
+        rereference_id: 'invoiceID',
         name: 'Condomínio',
         quantity: 1,
-        unit_amount: 150,
+        unit_amount: 15000,
       },
     ],
     shipping: {
       address: {
         city,
-        complement,
         country,
         locality,
         number: addressNumber,
@@ -129,10 +125,10 @@ export const makePaymentInvoicePayload = (
     reference_id: randomUUID(),
     charges: [
       {
-        reference_id: invoice.id,
+        reference_id: 'invoiceID',
         description: 'Condomínio',
         amount: {
-          value: 150,
+          value: 15000,
           currency: 'BRL',
         },
         payment_method: {
@@ -149,7 +145,6 @@ export const makePaymentInvoicePayload = (
               tax_id: cpf,
               address: {
                 city,
-                complement,
                 country,
                 locality,
                 number: addressNumber,

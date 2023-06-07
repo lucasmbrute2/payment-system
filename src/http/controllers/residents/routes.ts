@@ -12,16 +12,49 @@ export async function residentRoutes(app: FastifyInstance) {
     async (req: FastifyRequest, reply: FastifyReply) => {
       const createResidentSchema = z.object({
         name: z.string(),
+        email: z.string().email(),
         apartament: z.number(),
         cpf: z.string(),
+        address: z.object({
+          street: z.string(),
+          number: z.string(),
+          complement: z.string().optional(),
+          locality: z.string(),
+          city: z.string(),
+          region: z.string(),
+          region_code: z.string(),
+          country: z.string().optional(),
+          postalCode: z.string(),
+        }),
+        phone: z.object({
+          area: z.number(),
+          number: z.number(),
+          type: z
+            .enum(['MOBILE', 'BUSINESS', 'HOME'])
+            .default('MOBILE')
+            .optional(),
+        }),
       })
 
       const createResidentParamsSchema = z.object({
         buildingId: z.string(),
+        addressId: z.string().optional(),
       })
-      const { apartament, cpf, name } = createResidentSchema.parse(req.body)
-      const { buildingId } = createResidentParamsSchema.parse(req.params)
+      const { apartament, cpf, name, email, address, phone } =
+        createResidentSchema.parse(req.body)
 
+      const { area, number: phoneNumber } = phone
+      const {
+        city,
+        locality,
+        number,
+        postalCode,
+        region,
+        region_code,
+        street,
+      } = address
+      const params = createResidentParamsSchema.parse(req.params)
+      const { buildingId } = params
       const resident = await prisma.resident.findUnique({
         where: {
           cpf,
@@ -41,7 +74,35 @@ export async function residentRoutes(app: FastifyInstance) {
           apartament,
           cpf,
           name,
-          buildingId,
+          building: {
+            connect: {
+              id: buildingId,
+            },
+          },
+          email,
+          address: {
+            connectOrCreate: {
+              create: {
+                city,
+                complement: address.complement ?? '',
+                locality,
+                number,
+                postalCode,
+                region,
+                region_code,
+                street,
+              },
+              where: {
+                id: params?.addressId ?? '',
+              },
+            },
+          },
+          Phone: {
+            create: {
+              area,
+              number: phoneNumber,
+            },
+          },
         },
       })
 

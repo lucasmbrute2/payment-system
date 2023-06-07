@@ -17,15 +17,15 @@ model Syndicate {
 }
 
 model Address {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   street      String
   number      String
-  complement  String
+  complement  String?
   locality    String // Bairro
   city        String
   region      String // Estado
   region_code String // Código do Estado
-  country     String
+  country     String  @default("BRA")
   postalCode  String
 
   Resident Resident?
@@ -33,9 +33,9 @@ model Address {
 
 model Phone {
   id          String    @id @default(uuid())
-  countryCode String    @default("55")
-  area        String
-  number      String
+  countryCode Int       @default(55)
+  area        Int
+  number      Int
   type        PhoneType @default(MOBILE)
 
   Resident   Resident? @relation(fields: [residentId], references: [id])
@@ -45,11 +45,11 @@ model Phone {
 model Resident {
   id    String @id @default(uuid())
   name  String
-  email String
+  email String @unique
 
   apartament  Int
   cpf         String    @unique
-  nonPayments Int?
+  nonPayments Int?      @default(0)
   joinAt      DateTime  @default(now())
   leftAt      DateTime?
 
