@@ -17,6 +17,7 @@ main()
     app
       .listen({
         port: +env.PORT,
+        host: env.HOST,
       })
       .then(() => console.log(`Server running`))
   })
