@@ -3,7 +3,7 @@ FROM node:18-alpine AS builder
 WORKDIR /user/app
 
 COPY package.json ./
-
+COPY .env ./
 COPY prisma ./prisma/
 
 RUN npm install
