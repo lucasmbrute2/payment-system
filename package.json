@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "tsx watch src/server.ts",
-    "start": "node ./dist/server.js npx prisma migrate",
+    "start": "node ./dist/server.js",
     "build": "tsup src/server.ts",
-    "ci": "NODE_ENV=development npm i"
+    "ci": "NODE_ENV=development npm i",
+    "start:migrate:prod": "prisma migrate deploy && npm run start"
   },
   "keywords": [],
   "author": "",
