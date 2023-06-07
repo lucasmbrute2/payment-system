@@ -6,7 +6,8 @@
   "scripts": {
     "start:dev": "tsx watch src/server.ts",
     "start": "node ./dist/server.js npx prisma migrate deploy",
-    "build": "tsup src/server.ts"
+    "build": "tsup src/server.ts",
+    "ci": "NODE_ENV=development npm i"
   },
   "keywords": [],
   "author": "",
