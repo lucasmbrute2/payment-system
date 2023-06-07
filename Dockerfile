@@ -3,16 +3,16 @@ FROM node:18-alpine AS builder
 WORKDIR /user/app
 
 COPY package.json ./
-# COPY prisma ./prisma/
+
+COPY prisma ./prisma/
 
 RUN npm install
+
+RUN npx prisma generate
 
 COPY . .
 
 RUN npm run build
-RUN npx prisma init
-
-COPY . .
 
 FROM node:19-alpine
 
