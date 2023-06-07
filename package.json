@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "tsx watch src/server.ts",
-    "start": "node ./dist/server.js npx prisma migrate dev",
+    "start": "npx prisma migrate dev node ./dist/server.js",
     "build": "tsup src/server.ts",
     "ci": "NODE_ENV=development npm i"
   },
