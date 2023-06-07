@@ -12,8 +12,6 @@ RUN npx prisma generate
 
 COPY . .
 
-RUN npm run build
-
 FROM node:19-alpine
 
 COPY --from=builder /user/app/node_modules ./node_modules
