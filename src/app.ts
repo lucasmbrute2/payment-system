@@ -7,9 +7,13 @@ import { ZodError } from 'zod'
 import { blockRoutes } from './http/controllers/blocks/routes'
 import { buildingRoutes } from './http/controllers/buildings/routes'
 import { residentRoutes } from './http/controllers/residents/routes'
+import cors from '@fastify/cors'
 import '@/src/cron/invoices'
 
 export const app = fastify()
+app.register(cors, {
+  origin: '*',
+})
 
 app.register(fastifyJwt, {
   secret: env.SECRET_KEY,
