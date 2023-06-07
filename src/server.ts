@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { app } from './app'
 import { prisma } from './lib/prisma'
+import { env } from './config/env'
 
 async function main() {
   try {
@@ -15,7 +16,7 @@ main()
   .then(() => {
     app
       .listen({
-        port: 3333,
+        port: +env.PORT,
       })
       .then(() => console.log(`Server running`))
   })
