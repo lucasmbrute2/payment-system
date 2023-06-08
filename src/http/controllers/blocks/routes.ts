@@ -35,11 +35,7 @@ export async function blockRoutes(app: FastifyInstance) {
   })
 
   app.get('/blocks', async (req: FastifyRequest, reply: FastifyReply) => {
-    const blocks = await prisma.block.findMany({
-      where: {
-        syndicateId: req.user.sub,
-      },
-    })
+    const blocks = await prisma.block.findMany()
 
     return reply.status(200).send({
       blocks,
