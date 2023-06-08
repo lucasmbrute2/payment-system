@@ -11,6 +11,7 @@ const envSchema = z.object({
   PAYMENT_ACCESS_TOKEN: z.string(),
   MAIL_USERNAME: z.string(),
   MAIL_PASSWORD: z.string(),
+  ADMIN_PASSWORD: z.string(),
 })
 
 const _env = envSchema.safeParse(process.env)
