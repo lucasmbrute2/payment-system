@@ -18,5 +18,5 @@ import { hash } from 'bcrypt'
     }),
   ])
 
-  console.info(`Admin generated`)
+  console.info(`Admin generatedd`)
 })()
