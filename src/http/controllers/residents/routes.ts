@@ -55,12 +55,19 @@ export async function residentRoutes(app: FastifyInstance) {
       } = address
       const params = createResidentParamsSchema.parse(req.params)
       const { buildingId } = params
-      const resident = await prisma.resident.findUnique({
+      const resident = await prisma.resident.findMany({
         where: {
-          cpf,
+          OR: [
+            {
+              cpf,
+            },
+            {
+              email,
+            },
+          ],
         },
       })
-      if (resident) throw new AppError('Resident already exists', 400)
+      if (resident.length) throw new AppError('Resident already exists', 400)
 
       const hasBuilding = await prisma.building.findUnique({
         where: {
